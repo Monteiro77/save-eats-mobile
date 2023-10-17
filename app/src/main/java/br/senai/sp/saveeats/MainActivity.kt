@@ -18,6 +18,7 @@ import br.senai.sp.saveeats.singupcomponents.screen.SecondSignup
 import br.senai.sp.saveeats.singupcomponents.screen.ThirdSignupScreen
 import br.senai.sp.saveeats.splashcomponents.screen.SplashScreen
 import br.senai.sp.saveeats.ui.theme.SaveEatsTheme
+import br.senai.sp.saveeats.viewmodel.LoginScreenViewModel
 import br.senai.sp.saveeats.viewmodel.RestaurantViewModel
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = "first_signup_screen"
+                    startDestination = "splash_screen"
                 ) {
 
                     composable("splash_screen") {
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("login_screen") {
-                        LoginScreen(navController = navController, lifecycleScope = lifecycleScope, localStorage = Storage())
+                        LoginScreen(navController = navController, lifecycleScope = lifecycleScope, localStorage = Storage(), viewModel = LoginScreenViewModel())
                     }
 
                     composable("home_screen") {

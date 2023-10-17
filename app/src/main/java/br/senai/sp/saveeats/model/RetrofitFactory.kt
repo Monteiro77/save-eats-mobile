@@ -22,9 +22,10 @@ object RetrofitFactory {
 
     private var retrofitFactory = Retrofit
         .Builder()
-        .baseUrl(baseURL)
+        .baseUrl(baseURL3)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
     fun getSignup(): SignupService {
         return retrofitFactory.create(SignupService::class.java)
     }
@@ -67,5 +68,11 @@ object RetrofitFactory {
     fun getCategoryTips(): TipsService {
         return retrofitFactory.create(TipsService::class.java)
     }
+
+    fun getClientByEmail(): ClientService {
+        return retrofitFactory.create(ClientService::class.java)
+    }
+
+
 
 }

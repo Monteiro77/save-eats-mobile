@@ -1,8 +1,6 @@
 package br.senai.sp.saveeats.logincomponents.screen
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -49,13 +47,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import br.senai.sp.saveeats.R
 import br.senai.sp.saveeats.Storage
 import br.senai.sp.saveeats.components.CustomButton
 import br.senai.sp.saveeats.components.InputOutlineTextField
+import br.senai.sp.saveeats.components.LoginGoogle
 import br.senai.sp.saveeats.model.LoginRepository
 import br.senai.sp.saveeats.ui.theme.SaveEatsTheme
+import br.senai.sp.saveeats.viewmodel.LoginScreenViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -80,7 +81,8 @@ class LoginActivity : ComponentActivity() {
 fun LoginScreen(
     navController: NavController,
     lifecycleScope: LifecycleCoroutineScope,
-    localStorage: Storage
+    localStorage: Storage,
+    viewModel: LoginScreenViewModel
 ) {
 
     var context = LocalContext.current
@@ -299,41 +301,48 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
-                CustomButton(
-                    onClick = {
-                        login(email, password)
-                    },
-                    text = stringResource(id = R.string.login)
+//                CustomButton(
+//                    onClick = {
+//                        login(email, password)
+//                    },
+//                    text = stringResource(id = R.string.login)
+//                )
+
+                LoginGoogle(
+                    navController = navController,
+                    viewModel = viewModel,
+                    localStorage = localStorage,
+                    lifecycleCoroutineScope = lifecycleScope
                 )
 
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-            ) {
-
-                Text(
-                    text = stringResource(id = R.string.dont_have_an_account),
-                    fontSize = 14.sp,
-                    color = Color(20, 58, 11)
-                )
-
-                Spacer(modifier = Modifier.width(5.dp))
-
-                Text(
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate("signup_screen")
-                        },
-                    text = stringResource(id = R.string.create_your_account),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(20, 58, 11)
-                )
-
-            }
+//            Spacer(modifier = Modifier.height(5.dp))
+//
+//            Row(
+//                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+//            ) {
+//
+//                Text(
+//                    text = stringResource(id = R.string.dont_have_an_account),
+//                    fontSize = 14.sp,
+//                    color = Color(20, 58, 11)
+//                )
+//
+//                Spacer(modifier = Modifier.width(5.dp))
+//
+//                Text(
+//                    modifier = Modifier
+//                        .clickable {
+//                            navController.navigate("signup_screen")
+//                        },
+//                    text = stringResource(id = R.string.create_your_account),
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color(20, 58, 11)
+//                )
+//
+//            }
 
         }
 
