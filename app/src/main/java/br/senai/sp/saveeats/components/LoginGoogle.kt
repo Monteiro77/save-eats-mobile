@@ -55,13 +55,6 @@ fun LoginGoogle(
     lifecycleCoroutineScope: LifecycleCoroutineScope
 ) {
 
-    val degradeLeft = Brush.horizontalGradient(
-        colors = listOf(Color(0xFF000000), Color(0xFF00FE90))
-    )
-
-    val degradeRight = Brush.horizontalGradient(
-        colors = listOf(Color(0xFF00FE90), Color(0xFF000000))
-    )
 
     val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
@@ -73,9 +66,9 @@ fun LoginGoogle(
     val userEmail = user?.email
 
     //Login via email
-    val emailUserFirebase = localStorage.readDataString(context, "email")
+    val emailUserFirebase = localStorage.saveDataString(context, userEmail!!, "userEmail")
 
-    var call: ClientService = RetrofitFactory.getClientByEmail()
+    val clienteService : ClientService = RetrofitFactory.getInstance().create(ClientService::class.java)
 
     val launcher =
         rememberLauncherForActivityResult(
@@ -86,48 +79,36 @@ fun LoginGoogle(
                 val accocunt = task.getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(accocunt.idToken, null)
                 viewModel.signInWithGoogleCredential(credential) {
-//                    lifecycleCoroutineScope.launch {
-//
-//                        val result = call.getClientByEmail(userEmail.toString())
-//                        var idClient = result.body()?.clientes?.get(0)?.id
-//
-//                        if (result.isSuccessful){
-//                            localStorage.saveDataString(context, "${userEmail}", "email")
-//                            localStorage.saveDataString(context, "${idClient}", "idCliente")
+                    lifecycleCoroutineScope.launch {
 
-                    navController.navigate("home_screen")
-                //  }
+                        var response = clienteService.getClienteByEmail(userEmail.toString())
+
+                        Log.e("TESTE1",  "${response.body()?.data?.clientes?.email}")
+                        Log.e("TESTE2",  "${userEmail}")
+
+//                        var idClient = result.body()?.clientes?.id
+//
+//                        if(userEmail == emailUserFirebase) {
+//
+//                            if (result.isSuccessful) {
+//                                localStorage.saveDataString(context, "${userEmail}", "email")
+//                                localStorage.saveDataString(context, "${idClient}", "idCliente")
+//
+//                                navController.navigate("home_screen")
+//                            } else {
+//                                navController.navigate("first_signup_screen")
+//                            }
+//                        }else{
+//                            navController.navigate("home_screen")
+//                        }
+
+
+                    }
                 }
             }catch (ex : Exception){
                 Log.d("Falha no login", "Login Falhou ")
             }
         }
-
-    Column (
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ){
-
-        Row (
-            modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-
-
-            Text(
-                text = "Continue com",
-                color = Color.White,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(10.dp)
-            )
-
-        }
-
 
         Row(
             modifier = Modifier
@@ -156,12 +137,7 @@ fun LoginGoogle(
                     contentDescription = "Imagem do Google",
                     modifier = Modifier.size(60.dp)
                 )
-            }
-
-
         }
-
-
     }
 
 }

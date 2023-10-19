@@ -73,6 +73,12 @@ object RetrofitFactory {
         return retrofitFactory.create(ClientService::class.java)
     }
 
+    fun getInstance(): Retrofit{
+        return Retrofit.Builder()
+            .baseUrl(baseURL3)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
+    }
 
 }

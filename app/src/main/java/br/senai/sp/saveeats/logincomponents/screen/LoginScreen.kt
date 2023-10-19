@@ -301,12 +301,12 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
-//                CustomButton(
-//                    onClick = {
-//                        login(email, password)
-//                    },
-//                    text = stringResource(id = R.string.login)
-//                )
+                CustomButton(
+                    onClick = {
+                        login(email, password)
+                    },
+                    text = stringResource(id = R.string.login)
+                )
 
                 LoginGoogle(
                     navController = navController,

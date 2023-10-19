@@ -69,6 +69,8 @@ fun ThirdSignupScreen(
     var neighborhood = localStorage.readDataString(context, "neighborhood")
     var street = localStorage.readDataString(context, "street")
     var number = localStorage.readDataString(context, "number")
+    var userEmailGoogle = localStorage.readDataString(context, "userEmailFirebase")
+    var senha = "2345678"
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
@@ -321,21 +323,38 @@ fun ThirdSignupScreen(
 
                             CustomButton(
                                 onClick = {
+                                    if(password == null){
 
-                                    signup(
-                                        name!!,
-                                        cpf!!,
-                                        cep!!,
-                                        state!!,
-                                        city!!,
-                                        neighborhood!!,
-                                        street!!,
-                                        number!!,
-                                        email,
-                                        phone!!,
-                                        password,
-                                        confirmPassword
-                                    )
+                                        signup( name!!,
+                                            cpf!!,
+                                            cep!!,
+                                            state!!,
+                                            city!!,
+                                            neighborhood!!,
+                                            street!!,
+                                            number!!,
+                                            userEmailGoogle!!,
+                                            phone!!,
+                                            senha,
+                                            confirmPassword)
+
+                                    }else {
+
+                                        signup(
+                                            name!!,
+                                            cpf!!,
+                                            cep!!,
+                                            state!!,
+                                            city!!,
+                                            neighborhood!!,
+                                            street!!,
+                                            number!!,
+                                            email,
+                                            phone!!,
+                                            password,
+                                            confirmPassword
+                                        )
+                                    }
 
                                 }, text = stringResource(id = R.string.signup)
                             )
