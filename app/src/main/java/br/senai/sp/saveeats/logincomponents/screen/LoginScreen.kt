@@ -296,7 +296,7 @@ fun LoginScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp),
+                    .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -308,41 +308,46 @@ fun LoginScreen(
                     text = stringResource(id = R.string.login)
                 )
 
+
+
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = stringResource(id = R.string.dont_have_an_account),
+                    fontSize = 14.sp,
+                    color = Color(20, 58, 11)
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("signup_screen")
+                        },
+                    text = stringResource(id = R.string.create_your_account),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(20, 58, 11)
+                )
+
+            }
+            Row (modifier = Modifier.fillMaxWidth()){
                 LoginGoogle(
                     navController = navController,
                     viewModel = viewModel,
                     localStorage = localStorage,
                     lifecycleCoroutineScope = lifecycleScope
                 )
-
             }
 
-//            Spacer(modifier = Modifier.height(5.dp))
-//
-//            Row(
-//                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-//            ) {
-//
-//                Text(
-//                    text = stringResource(id = R.string.dont_have_an_account),
-//                    fontSize = 14.sp,
-//                    color = Color(20, 58, 11)
-//                )
-//
-//                Spacer(modifier = Modifier.width(5.dp))
-//
-//                Text(
-//                    modifier = Modifier
-//                        .clickable {
-//                            navController.navigate("signup_screen")
-//                        },
-//                    text = stringResource(id = R.string.create_your_account),
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = Color(20, 58, 11)
-//                )
-//
-//            }
+
 
         }
 

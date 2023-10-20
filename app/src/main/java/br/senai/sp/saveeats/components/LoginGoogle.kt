@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -59,17 +61,17 @@ fun LoginGoogle(
     val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
 
-    var statusFirebase = remember{ mutableStateOf(false) }
+    var statusFirebase = remember { mutableStateOf(false) }
     val token = "792868771874-5kpa8c7ecrdmtdtl7fr7uscs5nhgf8f8.apps.googleusercontent.com"
     val context = LocalContext.current
     val user = Firebase.auth.currentUser
     val userEmail = user?.email
+    val emailUsuario = localStorage.readDataString(context, "email")
     //Login Via Google
-    val emailUserFirebase = localStorage.readDataString(context, "email")
-    val clienteService : ClientService = RetrofitFactory.getInstance().create(ClientService::class.java)
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -77,26 +79,44 @@ fun LoginGoogle(
                 viewModel.signInWithGoogleCredential(credential) {
 
                     lifecycleCoroutineScope.launch {
-                        val result = clienteService.getClienteByEmail(userEmail.toString())
-                        var idALuno = result.body()?.data?.clientes?.id
 
-                        if (result.isSuccessful) {
-                            localStorage.saveDataString(context, "${userEmail}", "email")
-                            localStorage.saveDataString(context, "${idALuno}", "idAluno")
+                        val clienteService = RetrofitFactory.getClientByEmail().getClienteByEmail(userEmail.toString())
 
-                            navController.navigate("home_screen")
+//                        val result = clienteService.getClienteByEmail(userEmail.toString())
+                        var idClient = clienteService.body()?.clientes?.id
 
-                        } else {
-                            navController.navigate("first_signup_screen")
+
+                        Log.d(
+                            "Teste", "${clienteService.body()?.clientes}"
+                        )
+
+                        if (emailUsuario == userEmail){
+                            if (clienteService.isSuccessful) {
+                                localStorage.saveDataString(context, "${userEmail}", "email")
+                                localStorage.saveDataInt(context, idClient!!, "idClient")
+                                Log.e("testeLOginFIre", idClient.toString())
+                                Log.e("testeLOginFIre", userEmail.toString())
+
+                                navController.navigate("home_screen")
+                            } else {
+
+                                Log.e("testeErroLOginFIre", idClient.toString())
+                                Log.e("testeErroLOginFIre", userEmail.toString())
+                                navController.navigate("first_signup_screen")
+                                localStorage.saveDataString(context, "${userEmail}", "email")
+
+                            }
 
                         }
-                    }
 
+                    }
                 }
+
 
             } catch (ex: Exception) {
                 Log.d("Falhado Login", "Login Falhou")
             }
+        }
 
 
 //            try {
@@ -134,35 +154,42 @@ fun LoginGoogle(
 //
 //
 //            }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 50.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 50.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        
+        Text(
+            text = "Entre com google",
+            fontWeight = FontWeight(500),
+            fontSize = 15.sp
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        IconButton(
+            onClick = {
+                statusFirebase.value = true
+
+                val opcoes = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(token).requestEmail().build()
+
+                localStorage.saveDataString(context, user.toString(), "userFirebase")
+                localStorage.saveDataString(context, userEmail.toString(), "userEmailFirebase")
+                localStorage.saveDataString(context, statusFirebase.toString(), "statusFirebase")
+
+                val googleSingInCliente = GoogleSignIn.getClient(context, opcoes)
+                launcher.launch(googleSingInCliente.signInIntent)
+            }
         ) {
-            IconButton(
-                onClick = {
-                    statusFirebase.value = true
-
-                    val opcoes = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(token).requestEmail().build()
-
-                    localStorage.saveDataString(context, user.toString(), "userFirebase")
-                    localStorage.saveDataString(context, userEmail.toString(), "userEmailFirebase")
-                    localStorage.saveDataString(context, statusFirebase.toString(), "statusFirebase")
-
-                    val googleSingInCliente = GoogleSignIn.getClient(context, opcoes)
-                    launcher.launch(googleSingInCliente.signInIntent)
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "Imagem do Google",
-                    modifier = Modifier.size(60.dp)
-                )
+            Image(
+                painter = painterResource(id = R.drawable.google),
+                contentDescription = "Imagem do Google",
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
 

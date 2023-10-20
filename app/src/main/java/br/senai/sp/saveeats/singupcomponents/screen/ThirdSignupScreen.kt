@@ -69,11 +69,10 @@ fun ThirdSignupScreen(
     var neighborhood = localStorage.readDataString(context, "neighborhood")
     var street = localStorage.readDataString(context, "street")
     var number = localStorage.readDataString(context, "number")
-    var userEmailGoogle = localStorage.readDataString(context, "userEmailFirebase")
-    var senha = "2345678"
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var emailGoogle = localStorage.readDataString(context, "email")
 
     var validateEmail by rememberSaveable { mutableStateOf(true) }
     var validatePassword by rememberSaveable { mutableStateOf(true) }
@@ -146,7 +145,7 @@ fun ThirdSignupScreen(
                 if (response.isSuccessful) {
 
                     Toast.makeText(context, "Faça login", Toast.LENGTH_SHORT).show()
-                    navController.navigate("login_screen")
+                    navController.navigate("home_screen")
 
                 } else {
 
@@ -257,7 +256,12 @@ fun ThirdSignupScreen(
                     ) {
 
                         InputOutlineTextField(
-                            value = email,
+                            value =
+                            if (emailGoogle == null) {
+                                email
+                            } else {
+                                emailGoogle!!
+                            },
                             onValueChange = { email = it },
                             label = stringResource(id = R.string.email),
                             showError = !validateEmail,
@@ -323,23 +327,8 @@ fun ThirdSignupScreen(
 
                             CustomButton(
                                 onClick = {
-                                    if(password == null){
 
-                                        signup( name!!,
-                                            cpf!!,
-                                            cep!!,
-                                            state!!,
-                                            city!!,
-                                            neighborhood!!,
-                                            street!!,
-                                            number!!,
-                                            userEmailGoogle!!,
-                                            phone!!,
-                                            senha,
-                                            confirmPassword)
-
-                                    }else {
-
+                                    if(emailGoogle == null){
                                         signup(
                                             name!!,
                                             cpf!!,
@@ -354,7 +343,24 @@ fun ThirdSignupScreen(
                                             password,
                                             confirmPassword
                                         )
+                                    }else{
+                                        signup(
+                                            name!!,
+                                            cpf!!,
+                                            cep!!,
+                                            state!!,
+                                            city!!,
+                                            neighborhood!!,
+                                            street!!,
+                                            number!!,
+                                            emailGoogle!!,
+                                            phone!!,
+                                            password,
+                                            confirmPassword
+                                        )
                                     }
+
+
 
                                 }, text = stringResource(id = R.string.signup)
                             )

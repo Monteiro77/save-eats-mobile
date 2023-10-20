@@ -20,9 +20,11 @@ object RetrofitFactory {
 
     private const val baseURL3 = "https://save-eats.cyclic.cloud/"
 
+
+
     private var retrofitFactory = Retrofit
         .Builder()
-        .baseUrl(baseURL3)
+        .baseUrl(baseURL2)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -75,7 +77,7 @@ object RetrofitFactory {
 
     fun getInstance(): Retrofit{
         return Retrofit.Builder()
-            .baseUrl(baseURL3)
+            .baseUrl(baseURL2)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

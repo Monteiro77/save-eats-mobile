@@ -202,16 +202,18 @@ fun HomeScreen(
     //API CLIENT ADDRESS - START
 
     val idClient = localStorage.readDataInt(context, "idClient")
+    Log.e("homeFirebaseId", idClient.toString())
 
     var callClientAddress = RetrofitFactory
         .getAddressClient()
-        .getAddressClient(idClient)
+        .getAddressClient(31)
 
     callClientAddress.enqueue(object : Callback<ClientAddressList> {
         override fun onResponse(
             call: Call<ClientAddressList>,
             response: Response<ClientAddressList>
         ) {
+            Log.e("Teste", "${response.body()?.endereco_cliente}", )
             listClientAddress = response.body()!!.endereco_cliente
         }
 
@@ -351,8 +353,12 @@ fun HomeScreen(
                                 .height(45.dp)
                                 .padding(end = 15.dp)
                                 .clickable {
-                                    var openCategoryRestaurant = Intent(context, CategoryRestaurantScreen()::class.java)
-                                    openCategoryRestaurant.putExtra("name_category",it.nome_categoria)
+                                    var openCategoryRestaurant =
+                                        Intent(context, CategoryRestaurantScreen()::class.java)
+                                    openCategoryRestaurant.putExtra(
+                                        "name_category",
+                                        it.nome_categoria
+                                    )
                                     context.startActivity(openCategoryRestaurant)
                                 },
                             border = BorderStroke(0.8.dp, Color(212, 212, 212)),
@@ -562,8 +568,16 @@ fun HomeScreen(
                             .clickable {
 
                                 localStorage.saveDataString(context, it.foto, "imageRestaurant")
-                                localStorage.saveDataString(context, it.nome_fantasia, "nameRestaurant")
-                                localStorage.saveDataString(context, it.nome_categoria_restaurante, "nameCategoryRestaurant")
+                                localStorage.saveDataString(
+                                    context,
+                                    it.nome_fantasia,
+                                    "nameRestaurant"
+                                )
+                                localStorage.saveDataString(
+                                    context,
+                                    it.nome_categoria_restaurante,
+                                    "nameCategoryRestaurant"
+                                )
 
                                 var openProductsRestaurant =
                                     Intent(context, ProductsRestaurantScreen::class.java)
