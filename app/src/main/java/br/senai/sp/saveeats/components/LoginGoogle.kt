@@ -61,36 +61,60 @@ fun LoginGoogle(
 
     var statusFirebase = remember{ mutableStateOf(false) }
     val token = "792868771874-5kpa8c7ecrdmtdtl7fr7uscs5nhgf8f8.apps.googleusercontent.com"
-    val context =  LocalContext.current
+    val context = LocalContext.current
     val user = Firebase.auth.currentUser
     val userEmail = user?.email
-
-    //Login via email
-    val emailUserFirebase = localStorage.saveDataString(context, userEmail!!, "userEmail")
-
+    //Login Via Google
+    val emailUserFirebase = localStorage.readDataString(context, "email")
     val clienteService : ClientService = RetrofitFactory.getInstance().create(ClientService::class.java)
 
     val launcher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-            ){
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
-                val accocunt = task.getResult(ApiException::class.java)
-                val credential = GoogleAuthProvider.getCredential(accocunt.idToken, null)
+                val account = task.getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 viewModel.signInWithGoogleCredential(credential) {
+
                     lifecycleCoroutineScope.launch {
+                        val result = clienteService.getClienteByEmail(userEmail.toString())
+                        var idALuno = result.body()?.data?.clientes?.id
 
-                        var response = clienteService.getClienteByEmail(userEmail.toString())
+                        if (result.isSuccessful) {
+                            localStorage.saveDataString(context, "${userEmail}", "email")
+                            localStorage.saveDataString(context, "${idALuno}", "idAluno")
 
-                        Log.e("TESTE1",  "${response.body()?.data?.clientes?.email}")
-                        Log.e("TESTE2",  "${userEmail}")
+                            navController.navigate("home_screen")
 
-//                        var idClient = result.body()?.clientes?.id
+                        } else {
+                            navController.navigate("first_signup_screen")
+
+                        }
+                    }
+
+                }
+
+            } catch (ex: Exception) {
+                Log.d("Falhado Login", "Login Falhou")
+            }
+
+
+//            try {
+//                val accocunt = task.getResult(ApiException::class.java)
+//                val credential = GoogleAuthProvider.getCredential(accocunt.idToken, null)
+//                viewModel.signInWithGoogleCredential(credential) {
+//                    lifecycleCoroutineScope.launch {
 //
-//                        if(userEmail == emailUserFirebase) {
+//                        var response = clienteService.getClienteByEmail(userEmail.toString())
 //
-//                            if (result.isSuccessful) {
+//                        Log.e("TESTE1", "${response.body()?.data?.clientes?.email}")
+//                        Log.e("TESTE2", "${userEmail}")
+//
+//                        var idClient = response.body()?.data?.clientes?.email
+//
+//                        if (emailUserFirebase == userEmail) {
+//
+//                            if (response.isSuccessful) {
 //                                localStorage.saveDataString(context, "${userEmail}", "email")
 //                                localStorage.saveDataString(context, "${idClient}", "idCliente")
 //
@@ -99,15 +123,17 @@ fun LoginGoogle(
 //                                navController.navigate("first_signup_screen")
 //                            }
 //                        }else{
-//                            navController.navigate("home_screen")
+//                            navController.navigate("first_signup_screen")
 //                        }
-
-
-                    }
-                }
-            }catch (ex : Exception){
-                Log.d("Falha no login", "Login Falhou ")
-            }
+//                    }
+//
+//                }
+//            }catch (ex : Exception){
+//                Log.d("Falha no login", "Login Falhou ")
+//                Log.e("email", "${userEmail} ", )
+//
+//
+//            }
         }
 
         Row(
